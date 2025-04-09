@@ -3,10 +3,12 @@ package br.fiap.util;
 import br.fiap.fornecedor.Fornecedor;
 import br.fiap.produto.Produto;
 
+import java.text.DecimalFormat;
+
 import static javax.swing.JOptionPane.*;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
-
+import static java.lang.Double.parseDouble;
 
 public class Util {
 
@@ -44,12 +46,52 @@ public class Util {
 
         }
 
+        private void pesquisar() {
+        Fornecedor fornecedor = pesquisarFornecedor();
+        String msg = "";
+        if (fornecedor != null) {
+            msg += "Fornecedor: " + fornecedor.getNome() + "\n";
+            msg += "CNPJ : " + fornecedor.getCnpj() + "\n";
+            showInputDialog(null, msg);
+        }
+        }
 
     private void cadastrarProduto() {
+        String nome;
+        int quantidadeEstoque;
+        double valorUnitario;
+        Fornecedor fornecedor = pesquisarFornecedor();
+        if (fornecedor == null) {
+            fornecedor = cadastrarFornecedor();
 
+        }
+        nome = showInputDialog("Nome do produto");
+        quantidadeEstoque = parseInt(showInputDialog("Quantidade em estoque"));
+        valorUnitario = parseDouble(showInputDialog("Valor unitário"));
+        produto[indexProduto++] = new Produto(nome, quantidadeEstoque,valorUnitario, fornecedor);
+    }
+
+    private Fornecedor cadastrarFornecedor() {
+        Fornecedor fornecedor = null;
+        long cnpj = parseLong(showInputDialog("CNPJ do fornecedor"));
+        String nome = showInputDialog("Nome do fornecedor");
+        fornecedor = new Fornecedor(nome, cnpj);
+        this.fornecedor[indexFornecedor++] = fornecedor;
+        return fornecedor;
     }
 
     private void pesquisarProduto() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        String msg = "Produto não cadastrado";
+        String nome = showInputDialog("Nome do produto");
+        for (int i = 0; i < indexProduto; i++) {
+            if (produto[i].getNome().equalsIgnoreCase(nome)) {
+                msg = "";
+                msg += "Nome do produto: " + nome + "\n";
+                msg += "Valor unitário: " + df.format(produto[i].getValorUnitario()) + "\n";
+                msg += "Fornecedor: " + produto[i].getFornecedor().getNome() + "\n";
+            }
+        }
     }
 
     private Fornecedor pesquisarFornecedor() {
